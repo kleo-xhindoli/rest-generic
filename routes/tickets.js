@@ -12,7 +12,6 @@ router.use(bodyParser.json());
 router.route('/')
 	.get(Verify.verifyOrdinaryUser, function(req, res, next){
 		Tickets.find({})
-		.populate('createdBy')
 		.exec(function(err, ticket){
 			if(err) console.log(err);
 			res.json(ticket);
@@ -22,12 +21,10 @@ router.route('/')
 		Tickets.create(req.body, function(err, ticket){
 			if(err) console.log(err);
 			console.log('ticket Created!');
-			var id = ticket._id;
-			res.writeHead(200, {'Content-Type': 'text/plain'});
-			res.end('Added the ticket with id: ' + id);
+			res.json(ticket);
 		});
 	})
-	.delete(Verify.verifyOrdinaryUser, Verify.verifyAdmin, function(req, res, next){
+	.delete(function(req, res, next){
 		Tickets.remove({}, function(err, resp){
 			if(err) console.log(err);
 			res.json(resp);

@@ -10,7 +10,7 @@ router.use(bodyParser.json());
 
 /* GET home page. */
 router.route('/')
-	.get(Verify.verifyOrdinaryUser, function(req, res, next){
+	.get(function(req, res, next){
 		InfoCards.find({})
 		.exec(function(err, infoCard){
 			if(err) {console.log(err); next(err);}
@@ -50,7 +50,7 @@ router.route('/:infoCardId')
 			res.json(infoCard);
 		});
 	})
-	.delete(Verify.verifyOrdinaryUser, Verify.verifyAdmin, function(req, res, next){
+	.delete(function(req, res, next){
 		InfoCards.findByIdAndRemove(req.params.infoCardId, function (err, resp) {        
 			if (err) {console.log(err); next(err);}
 	        res.json(resp);

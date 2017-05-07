@@ -11,7 +11,7 @@ router.use(bodyParser.json());
 /* GET home page. */
 router.route('/')
 	.get(Verify.verifyOrdinaryUser, function(req, res, next){
-		Tickets.find({})
+		Tickets.find({'createdBy': req.decoded._doc._id})
 		.exec(function(err, ticket){
 			if(err) console.log(err);
 			res.json(ticket);
@@ -30,6 +30,16 @@ router.route('/')
 			res.json(resp);
 		});
 });
+
+router.route('/all')
+	.get(Verify.verifyOrdinaryUser, function(req, res, next){
+		Tickets.find({})
+		.populate('createdBy')
+		.exec(function(err, ticket){
+			if(err) console.log(err);
+			res.json(ticket);
+		});
+	})
 
 router.route('/:ticketId')
 	.get(Verify.verifyOrdinaryUser, function(req, res, next){

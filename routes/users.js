@@ -54,7 +54,7 @@ router.post('/login', function(req, res, next){
 				status: 'Login successful!',
 				success: true,
 				token: token,
-				id: user.id,
+				id: user._id,
 				fullname: user.firstname + ' ' + user.lastname,
 				username: user.username
 			});

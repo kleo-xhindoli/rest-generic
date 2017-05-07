@@ -4,6 +4,11 @@ var Schema = mongoose.Schema;
 
 
 var ticketSchema = new Schema({
+    createdBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: false
+    },
     service: {
         type: String,
         required: false

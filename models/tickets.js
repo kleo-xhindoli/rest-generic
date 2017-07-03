@@ -29,6 +29,15 @@ var ticketSchema = new Schema({
         type: String,
         required: true
     },
+    nbServices: {
+        type: Number,
+        required: false,
+        default: 1
+    },
+    endTime: {
+        type: String,
+        required: false
+    }
 }, {
     timestamps: true
 });

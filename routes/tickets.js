@@ -41,6 +41,35 @@ router.route('/all')
 		});
 	})
 
+router.route('/time-intervals/:date')
+	.get(Verify.verifyOrdinaryUser, function(req, res, next){
+		Tickets.find({date: req.params.date})
+		.exec(function(err, tickets){
+			if(err) console.log(err);
+			var intervals = [];
+			tickets.forEach(function(ticket){
+				intervals.push({
+					start: ticket.time,
+					end: ticket.endTime
+				});
+			});
+			intervals.sort(function(a, b){
+				var ha = parseInt(a.start.split(':')[0]);
+				var hb = parseInt(b.start.split(':')[0]);
+				var ma = parseInt(a.start.split(':')[1]);
+				var mb = parseInt(b.start.split(':')[1]);
+				if (ha < hb) return -1;
+				else if(ha > hb) return 1;
+				else{
+					if (ma < mb) return -1;
+					else if (ma > mb) return 1;
+					else return 0;
+				}
+			})
+			res.json(intervals);
+		});
+	});
+
 router.route('/:ticketId')
 	.get(Verify.verifyOrdinaryUser, function(req, res, next){
 		Tickets.findById(req.params.ticketId)
@@ -59,7 +88,7 @@ router.route('/:ticketId')
 		});
 	})
 	.delete(Verify.verifyOrdinaryUser, Verify.verifyAdmin, function(req, res, next){
-		Tickets.findByIdAndRemove(req.params.ticketId, function (err, resp) {        
+		Tickets.findByIdAndRemove(req.params.ticketId, function (err, resp) {
 			if (err) console.log(err);
 	        res.json(resp);
 	    });

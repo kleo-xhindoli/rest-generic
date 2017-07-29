@@ -25,6 +25,7 @@ var users = require('./routes/users');
 var dishes = require('./routes/dishes');
 var tickets = require('./routes/tickets');
 var infoCards = require('./routes/infoCards');
+var feedback = require('./routes/feedback');
 // var promotions = require('./routes/promotions');
 var leaders = require('./routes/leaders');
 var favorites = require('./routes/favoriteRouter');
@@ -57,6 +58,7 @@ app.use('/infocards', infoCards);
 // app.use('/promotions', promotions);
 app.use('/leadership', leaders);
 app.use('/favorites', favorites);
+app.use('/feedback', feedback);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

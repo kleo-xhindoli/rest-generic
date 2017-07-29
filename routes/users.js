@@ -24,6 +24,9 @@ router.post('/register', function(req,res){
 		if(req.body.lastname){
 			user.lastname = req.body.lastname;
 		}
+		user.birthday = req.body.birthday;
+		user.cardId = req.body.cardId;
+		user.tel = req.body.tel;
 		user.save(function(err, user){
 			passport.authenticate('local')(req, res, function(){
 				return res.status(200).json({status: 'Registration Successful!'});

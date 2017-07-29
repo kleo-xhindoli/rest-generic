@@ -32,6 +32,27 @@ exports.verifyOrdinaryUser = function(req, res, next){
 	}
 };
 
+exports.decodeTokenIfAvailable = function(req, res, next) {
+	var token = req.body.token || req.query.token || req.headers['x-access-token'];
+	if(token){
+		jwt.verify(token, config.secretKey, function(err, decoded){
+			if(err){
+				console.log(err);
+				var err = new Error('You are not authenticated!');
+				err.status = 401;
+				return next(err);
+			}
+			else{
+				req.decoded = decoded;
+				next();
+			}
+		});
+	}
+	else {
+		next();
+	}
+}
+
 exports.verifyAdmin = function(req, res, next){
 	if(req.decoded._doc.admin !== true){
 		var err = new Error('You are not authorized to perform this operation');

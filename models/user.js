@@ -20,6 +20,18 @@ var User = new Schema({
     admin: {
         type: Boolean,
         default: false
+    },
+    birthday: {
+        type: String,
+        default: ''
+    },
+    cardId: {
+        type: String,
+        default: ''
+    },
+    tel: {
+        type: String,
+        default: ''
     }
 });
 

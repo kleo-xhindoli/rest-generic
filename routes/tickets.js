@@ -2,6 +2,10 @@ var express = require('express');
 var router = express.Router();
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
+var q = require('q');
+var json2csv = require('json2csv');
+var fs = require('fs');
+var path = require('path');
 var Verify = require('./verify');
 
 var Tickets = require('../models/tickets');
@@ -18,11 +22,14 @@ router.route('/')
 		});
 	})
 	.post(Verify.verifyOrdinaryUser, function(req, res, next){
-		Tickets.create(req.body, function(err, ticket){
-			if(err) console.log(err);
-			console.log('ticket Created!');
-			res.json(ticket);
-		});
+		generateNewCode().then(function(code){
+			req.body.ticketCode = code;
+			Tickets.create(req.body, function(err, ticket){
+				if(err) console.log(err);
+				console.log('ticket Created!');
+				res.json(ticket);
+			});
+		})
 	})
 	.delete(function(req, res, next){
 		Tickets.remove({}, function(err, resp){
@@ -70,6 +77,27 @@ router.route('/time-intervals/:date')
 		});
 	});
 
+router.route('/csv')
+	.get(function(req, res, next){
+		Tickets.find({})
+		// .populate('createdBy')
+		.exec(function(err, tickets){
+			if(err) console.log(err);
+			var data = JSON.stringify(tickets);
+			var fields = ['_id', 'date', 'time', 'endTime', 'location', 'service', 'nbServices', 'status', 'createdAt',  'createdBy'];
+			var fieldNames = ['ID', 'Data', 'Ora e fillimit', 'Ora e mbarimit', 'Vendndodhja', 'Sherbimi', 'Numri i sherbimeve', 'Statusi', 'Krijuar me',  'Krijuar nga'];
+			var csv = json2csv({ data: tickets, fields: fields, fieldNames: fieldNames });
+			var file = path.resolve(`${__dirname}/../public/tickets.csv`);
+			fs.writeFile(file, csv, function(err) {
+				if (err) {
+					res.status(500).send('Could not create file');
+				}
+				res.download(file, 'tickets.csv');
+
+			})
+		});
+	});
+
 router.route('/:ticketId')
 	.get(Verify.verifyOrdinaryUser, function(req, res, next){
 		Tickets.findById(req.params.ticketId)
@@ -96,4 +124,20 @@ router.route('/:ticketId')
 
 
 
+
 module.exports = router;
+
+generateNewCode = function() {
+	var defer = q.defer();
+	Tickets.count()
+	.exec(function(err, count) {
+		if (err) defer.reject(err);
+		count++;
+		var newCode = count.toString();
+		while(newCode.length < 6){
+			newCode = '0' + newCode;
+		}
+		defer.resolve(newCode);
+	});
+	return defer.promise;
+}

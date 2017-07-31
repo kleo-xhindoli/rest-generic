@@ -35,6 +35,27 @@ router.post('/register', function(req,res){
 	});
 });
 
+router.post('/register-admin', Verify.verifyOrdinaryUser, Verify.verifyAdmin, function(req, res){
+	User.register(new User({username: req.body.username}), req.body.password, function(err, user){
+		if(err){
+			return res.status(500).json({err: err});
+		}
+
+		if(req.body.firstname){
+			user.firstname = req.body.firstname;
+		}
+		if(req.body.lastname){
+			user.lastname = req.body.lastname;
+		}
+		user.admin = true;
+		user.save(function(err, user){
+			passport.authenticate('local')(req, res, function(){
+				return res.status(200).json({status: 'Registration Successful!'});
+			});
+		});
+	});
+});
+
 router.post('/login', function(req, res, next){
 	passport.authenticate('local', function(err, user, info){
 		if(err){
@@ -59,7 +80,8 @@ router.post('/login', function(req, res, next){
 				token: token,
 				id: user._id,
 				fullname: user.firstname + ' ' + user.lastname,
-				username: user.username
+				username: user.username,
+				admin: user.admin
 			});
 		});
 	})(req, res, next);
@@ -70,6 +92,28 @@ router.get('/logout', function(req, res){
 	res.status(200).json({
 		status: 'Bye'
 	});
+});
+
+router.post('/changePassword/:username', Verify.verifyOrdinaryUser, function(req, res){
+	if (req.decoded._doc.username !== req.params.username) {
+		res.status(403).json({
+			message: 'You are not authorized to perform this action'
+		});
+	}
+	else {
+		User.findByUsername(req.params.username).exec(function(err, user) {
+			if (err) {
+				console.log(err);
+				res.status(500).json(err);
+			}
+			user.setPassword(req.body.password, function() {
+				user.save();
+				res.status(200).json({
+					message: "Password changed successfully"
+				});
+			})
+		});
+	}
 });
 
 // router.get('/facebook', passport.authenticate('facebook'), function(req,res){});

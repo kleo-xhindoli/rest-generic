@@ -13,6 +13,10 @@ var ticketSchema = new Schema({
         type: String,
         required: false
     },
+    ticketCode: {
+        type: String,
+        required: false
+    },
     location: {
         type: String,
         required: true

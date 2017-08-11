@@ -27,7 +27,7 @@ router.route('/')
 			res.json(fBack);
 		});
 	})
-	.delete(function(req, res, next){
+	.delete(Verify.verifyOrdinaryUser, Verify.verifyAdmin, function(req, res, next){
 		Feedback.remove({}, function(err, resp){
 			if(err) console.log(err);
 			res.json(resp);
@@ -35,7 +35,7 @@ router.route('/')
 });
 
 router.route('/all')
-	.get(Verify.verifyOrdinaryUser, function(req, res, next){
+	.get(Verify.verifyOrdinaryUser, Verify.verifyAdmin, function(req, res, next){
 		Feedback.find({})
 		.populate('createdBy')
 		.exec(function(err, fBack){

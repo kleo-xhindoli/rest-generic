@@ -31,7 +31,7 @@ router.route('/')
 			});
 		})
 	})
-	.delete(function(req, res, next){
+	.delete(Verify.verifyOrdinaryUser, Verify.verifyAdmin, function(req, res, next){
 		Tickets.remove({}, function(err, resp){
 			if(err) console.log(err);
 			res.json(resp);
@@ -39,7 +39,7 @@ router.route('/')
 });
 
 router.route('/all')
-	.get(Verify.verifyOrdinaryUser, function(req, res, next){
+	.get(Verify.verifyOrdinaryUser, Verify.verifyAdmin, function(req, res, next){
 		Tickets.find({})
 		.populate('createdBy')
 		.exec(function(err, ticket){
@@ -99,7 +99,7 @@ router.route('/csv')
 	});
 
 router.route('/:ticketId')
-	.get(Verify.verifyOrdinaryUser, function(req, res, next){
+	.get(Verify.verifyOrdinaryUser, Verify.verifyAdmin, function(req, res, next){
 		Tickets.findById(req.params.ticketId)
 		.populate('comments.postedBy')
 		.exec(function(err, ticket){
@@ -107,7 +107,7 @@ router.route('/:ticketId')
 			res.json(ticket);
 		});
 	})
-	.put(Verify.verifyOrdinaryUser, function(req, res, next){
+	.put(Verify.verifyOrdinaryUser, Verify.verifyAdmin, function(req, res, next){
 		Tickets.findByIdAndUpdate(req.params.ticketId, {
 			$set: req.body
 		}, {new: true}, function(err, ticket){

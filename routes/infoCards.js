@@ -17,7 +17,7 @@ router.route('/')
 			res.json(infoCard);
 		});
 	})
-	.post(Verify.verifyOrdinaryUser, function(req, res, next){
+	.post(Verify.verifyOrdinaryUser, Verify.verifyAdmin, function(req, res, next){
 		InfoCards.create(req.body, function(err, infoCard){
 			if(err) {console.log(err); next(err);}
 			console.log('infoCard Created!');
@@ -34,7 +34,7 @@ router.route('/')
 });
 
 router.route('/:infoCardId')
-	.get(Verify.verifyOrdinaryUser, function(req, res, next){
+	.get(function(req, res, next){
 		InfoCards.findById(req.params.infoCardId)
 		.populate('comments.postedBy')
 		.exec(function(err, infoCard){
@@ -42,7 +42,7 @@ router.route('/:infoCardId')
 			res.json(infoCard);
 		});
 	})
-	.put(Verify.verifyOrdinaryUser, function(req, res, next){
+	.put(Verify.verifyOrdinaryUser, Verify.verifyAdmin, function(req, res, next){
 		InfoCards.findByIdAndUpdate(req.params.infoCardId, {
 			$set: req.body
 		}, {new: true}, function(err, infoCard){
@@ -50,7 +50,7 @@ router.route('/:infoCardId')
 			res.json(infoCard);
 		});
 	})
-	.delete(function(req, res, next){
+	.delete(Verify.verifyOrdinaryUser, Verify.verifyAdmin, function(req, res, next){
 		InfoCards.findByIdAndRemove(req.params.infoCardId, function (err, resp) {        
 			if (err) {console.log(err); next(err);}
 	        res.json(resp);

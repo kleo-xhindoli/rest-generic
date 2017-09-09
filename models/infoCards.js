@@ -36,7 +36,7 @@ var infoCardSchema = new Schema({
         number: Number,
         docType: String,
         institution: String,
-        validPeriod: String
+        description: String
     }],
     applyLocation: {
         office: String,
@@ -51,7 +51,9 @@ var infoCardSchema = new Schema({
         lvl4: Boolean,
     },
     fee: {
-        type: String
+        base: String,
+        extra: String,
+        paymentMethod: String
     },
     serviceDuration: {
         type: String
@@ -63,18 +65,19 @@ var infoCardSchema = new Schema({
         type: String
     },
     location: {
-        sportel: Boolean,
-        postOffice: Boolean,
-        internet: Boolean,
-        email: Boolean,
+        type: String
     },
     responsibleInstitution: {
         type: String
     },
     contact: {
-        type: String
+        contactInfo: String,
+        availableHours: String
     },
     legalInfo: {
+        type: String
+    },
+    complaints: {
         type: String
     }
     

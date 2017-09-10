@@ -107,7 +107,7 @@ router.route('/:ticketId')
 			res.json(ticket);
 		});
 	})
-	.put(Verify.verifyOrdinaryUser, Verify.verifyAdmin, function(req, res, next){
+	.put(Verify.verifyOrdinaryUser, function(req, res, next){
 		Tickets.findByIdAndUpdate(req.params.ticketId, {
 			$set: req.body
 		}, {new: true}, function(err, ticket){

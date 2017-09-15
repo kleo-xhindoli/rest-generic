@@ -9,13 +9,9 @@ var InfoCards = require('../models/infoCards');
 router.use(bodyParser.json());
 
 /* GET home page. */
-router.route('/:from?/:to?')
+router.route('/')
 	.get(function(req, res, next){
-		let from = parseInt(req.params.from);
-		let to = parseInt(req.params.to);
-		console.log(from);
-		console.log(to);
-		InfoCards.find({}).skip(from || 0).limit(to || 0)
+		InfoCards.find({})
 		.exec(function(err, infoCard){
 			if(err) {console.log(err); next(err);}
 			res.json(infoCard);
@@ -36,6 +32,27 @@ router.route('/:from?/:to?')
 			res.json(resp);
 		});
 });
+
+router.route('/:from/:to')
+.get(function(req, res, next){
+	let from = parseInt(req.params.from);
+	let to = parseInt(req.params.to);
+	InfoCards.find({}).skip(from || 0).limit(to || 0)
+	.exec(function(err, infoCard){
+		if(err) {console.log(err); next(err);}
+		res.json(infoCard);
+	});
+})
+
+router.route('/institutions')
+.get(function(req, res, next){
+	InfoCards.find({})
+	.distinct('responsibleInstitution')
+	.exec(function(err, infoCard){
+		if(err) {console.log(err); next(err);}
+		res.json(infoCard);
+	});
+})
 
 router.route('/:infoCardId')
 	.get(function(req, res, next){

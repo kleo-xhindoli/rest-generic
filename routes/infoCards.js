@@ -9,9 +9,13 @@ var InfoCards = require('../models/infoCards');
 router.use(bodyParser.json());
 
 /* GET home page. */
-router.route('/')
+router.route('/:from?/:to?')
 	.get(function(req, res, next){
-		InfoCards.find({})
+		let from = parseInt(req.params.from);
+		let to = parseInt(req.params.to);
+		console.log(from);
+		console.log(to);
+		InfoCards.find({}).skip(from || 0).limit(to || 0)
 		.exec(function(err, infoCard){
 			if(err) {console.log(err); next(err);}
 			res.json(infoCard);

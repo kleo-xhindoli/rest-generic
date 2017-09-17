@@ -50,7 +50,7 @@ router.route('/all')
 
 router.route('/time-intervals/:date')
 	.get(Verify.verifyOrdinaryUser, function(req, res, next){
-		Tickets.find({date: req.params.date})
+		Tickets.find({date: req.params.date, status: 'Aprovuar'})
 		.exec(function(err, tickets){
 			if(err) console.log(err);
 			var intervals = [];
@@ -115,7 +115,7 @@ router.route('/:ticketId')
 			res.json(ticket);
 		});
 	})
-	.delete(Verify.verifyOrdinaryUser, Verify.verifyAdmin, function(req, res, next){
+	.delete(Verify.verifyOrdinaryUser, function(req, res, next){
 		Tickets.findByIdAndRemove(req.params.ticketId, function (err, resp) {
 			if (err) console.log(err);
 	        res.json(resp);

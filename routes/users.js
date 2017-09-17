@@ -3,6 +3,7 @@ var router = express.Router();
 var passport = require('passport');
 var User = require('../models/user');
 var Verify = require('./verify');
+var Mailer = require('./mailer');
 
 /* GET users listing. */
 router.get('/', Verify.verifyOrdinaryUser, Verify.verifyAdmin, function(req, res, next) {
@@ -116,34 +117,62 @@ router.post('/changePassword/:username', Verify.verifyOrdinaryUser, function(req
 	}
 });
 
-// router.get('/facebook', passport.authenticate('facebook'), function(req,res){});
+router.post('/resetPassword', function(req, res){
+	User.findByUsername(req.body.username).exec(function(err, user) {
+		if (err || !user) {
+			console.log(err);
+			res.status(404).json(err);
+			return;
+		}
+		if (!user.resetCode || req.body.resetCode !== user.resetCode) {
+			res.status(403).json({message: "Invalid Reset Code"});
+			return;
+		}
+		user.setPassword(req.body.password, function() {
+			user.resetCode = generateResetCode();
+			user.save();
+			res.status(200).json({
+				message: "Password changed successfully"
+			});
+		})
+	});
+});
 
-// router.get('/facebook/callback', function(req,res,next){
-// 	passport.authenticate('facebook', function(err, user, info){
-// 		if(err){
-// 			return next(err);
-// 		}
-// 		if(!user){
-// 			return res.status(401).json({
-// 				err: info
-// 			});
-// 		}
-// 		req.logIn(user, function(err){
-// 			if(err){
-// 				return res.status(500).json({
-// 					err: 'Could not log in user'
-// 				});
-// 			}
+router.post('/requestReset', function(req, res){
+	User.findByUsername(req.body.username).exec(function(err, user) {
+		if (err || !user) {
+			console.log(err);
+			res.status(404).json(err);
+			return;
+		}
+		let code = generateResetCode();
+		user.resetCode = code;
+		user.save(function(err, newUser){
+			if (err) {
+				console.log(err);
+				res.send(500).json({message: err});
+			}
+			else {
+				Mailer.sendResetMail(req.body.username, code);
+				res.status(200).json({
+					message: 'Success'
+				});
+			}
+		});
+	});
+});
 
-// 			var token = Verify.getToken(user);
-// 			res.status(200).json({
-// 				status: 'Login successful!',
-// 				success: true,
-// 				token: token
-// 			});
-// 		});
-// 	})(req, res, next);
-// });
+generateResetCode = function() {
+	let output = '';
+	for(let i = 0; i < 6; i++) {
+		output += getRandomInt(0, 9);
+	}
+	return output;
+}
+
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 
 
 module.exports = router;

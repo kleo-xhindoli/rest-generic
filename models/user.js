@@ -32,6 +32,9 @@ var User = new Schema({
     tel: {
         type: String,
         default: ''
+    },
+    resetCode: {
+        type: String
     }
 });
 

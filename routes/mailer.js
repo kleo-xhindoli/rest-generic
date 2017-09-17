@@ -1,4 +1,4 @@
-var config = require('../config');
+var config = require('../config.local');
 var sg = require('sendgrid')(config.sendgridKey);
 
 var helper = require('sendgrid').mail;

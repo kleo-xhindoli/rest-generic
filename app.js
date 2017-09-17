@@ -1,4 +1,4 @@
-var config = require('./config');
+var config = require('./config.local');
 
 var express = require('express');
 var path = require('path');

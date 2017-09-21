@@ -22,13 +22,9 @@ db.once('open', function(){
 //ROUTERS
 var routes = require('./routes/index');
 var users = require('./routes/users');
-var dishes = require('./routes/dishes');
 var tickets = require('./routes/tickets');
 var infoCards = require('./routes/infoCards');
 var feedback = require('./routes/feedback');
-// var promotions = require('./routes/promotions');
-var leaders = require('./routes/leaders');
-var favorites = require('./routes/favoriteRouter');
 
 var app = express();
 
@@ -52,12 +48,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
 app.use('/users', users);
-app.use('/dishes', dishes);
 app.use('/tickets', tickets);
 app.use('/infocards', infoCards);
-// app.use('/promotions', promotions);
-app.use('/leadership', leaders);
-app.use('/favorites', favorites);
 app.use('/feedback', feedback);
 
 // catch 404 and forward to error handler

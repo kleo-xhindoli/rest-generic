@@ -44,7 +44,7 @@ app.use(cors());
 app.use(passport.initialize());
 
 
-app.use('/admin', express.static(path.join(__dirname, 'public')));
+app.use('/', express.static(path.join(__dirname, 'public/admin/dist')));
 
 app.use('/api/', routes);
 app.use('/api/users', users);

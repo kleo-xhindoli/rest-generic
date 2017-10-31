@@ -22,13 +22,46 @@ router.route('/')
 		});
 	})
 	.post(Verify.verifyOrdinaryUser, function(req, res, next){
-		generateNewCode().then(function(code){
-			req.body.ticketCode = code;
-			Tickets.create(req.body, function(err, ticket){
-				if(err) console.log(err);
-				console.log('ticket Created!');
-				res.json(ticket);
-			});
+		Tickets.find({})
+		.exec(function(err, tickets) {
+			let usersTickets = tickets
+				.filter(function(t) {
+					return t.status == 'Aprovuar';
+				})
+				.filter(function(t) {
+					return t.date === req.body.date;
+				})
+				.filter(function(t) {
+					return t.createdBy == req.decoded._doc._id;
+				})
+
+			let collisions = tickets
+				.filter(function(t) {
+					return t.status == 'Aprovuar';
+				})
+				.filter(function(t) {
+					return t.date === req.body.date;
+				})
+				.some(function(t) {
+					return t.time === req.body.time || (isBetweenTimes(req.body.time, t.time, t.endTime) || isBetweenTimes(req.body.endTime, t.time, t.endTime))
+				});
+
+			if (usersTickets.length >= 3) {
+				res.status(401).send('Ju nuk mund të bëni më shumë se 3 rezervime në të njëjtën datë.');
+			}
+			else if (collisions) {
+				res.status(401).send('Orari qe ju përzgjodhët është zgjedhur nga dikush tjetër. Ju lutem zgjidhni një orar të ri.');
+			}
+			else {
+				generateNewCode().then(function(code){
+					req.body.ticketCode = code;
+					Tickets.create(req.body, function(err, ticket){
+						if(err) console.log(err);
+						console.log('ticket Created!');
+						res.json(ticket);
+					});
+				})
+			}
 		})
 	})
 	.delete(Verify.verifyOrdinaryUser, Verify.verifyAdmin, function(req, res, next){
@@ -140,4 +173,22 @@ generateNewCode = function() {
 		defer.resolve(newCode);
 	});
 	return defer.promise;
+}
+
+compareTimes = function(a, b) {
+	var ha = parseInt(a.split(':')[0]);
+	var hb = parseInt(b.split(':')[0]);
+	var ma = parseInt(a.split(':')[1]);
+	var mb = parseInt(b.split(':')[1]);
+	if (ha < hb) return -1;
+	else if(ha > hb) return 1;
+	else{
+		if (ma < mb) return -1;
+		else if (ma > mb) return 1;
+		else return 0;
+	}
+}
+
+isBetweenTimes = function (time, timeA, timeB) {
+	return (compareTimes(time, timeA) > 0 && compareTimes(time, timeB) < 0)
 }

@@ -52,7 +52,7 @@ router.route('/:feedbackId')
 			res.json(ticket);
 		});
 	})
-	.put(Verify.verifyOrdinaryUser, function(req, res, next){
+	.put(Verify.verifyOrdinaryUser,Verify.verifyAdmin, function(req, res, next){
 		Feedback.findByIdAndUpdate(req.params.feedbackId, {
 			$set: req.body
 		}, {new: true}, function(err, ticket){

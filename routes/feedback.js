@@ -38,6 +38,7 @@ router.route('/all')
 	.get(Verify.verifyOrdinaryUser, Verify.verifyAdmin, function(req, res, next){
 		Feedback.find({})
 		.populate('createdBy')
+		.populate('cardId')
 		.exec(function(err, fBack){
 			if(err) console.log(err);
 			res.json(fBack);

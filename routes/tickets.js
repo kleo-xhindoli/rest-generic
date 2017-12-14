@@ -115,24 +115,40 @@ router.route('/time-intervals/:date')
 
 router.route('/csv')
 	.get(function(req, res, next){
-		Tickets.find({})
-		// .populate('createdBy')
-		.exec(function(err, tickets){
-			if(err) console.log(err);
-			var data = JSON.stringify(tickets);
-			var fields = ['_id', 'date', 'time', 'endTime', 'location', 'service', 'nbServices', 'status', 'createdAt',  'createdBy'];
-			var fieldNames = ['ID', 'Data', 'Ora e fillimit', 'Ora e mbarimit', 'Vendndodhja', 'Sherbimi', 'Numri i sherbimeve', 'Statusi', 'Krijuar me',  'Krijuar nga'];
-			var csv = json2csv({ data: tickets, fields: fields, fieldNames: fieldNames });
-			var file = path.resolve(`${__dirname}/../public/tickets.csv`);
-			fs.writeFile(file, csv, function(err) {
-				if (err) {
-					res.status(500).send('Could not create file');
-				}
-				res.download(file, 'tickets.csv');
+		var file = path.resolve(`${__dirname}/../public/tickets.csv`);
+		res.download(file, 'tickets.csv');
+		// Tickets.find({})
+		// // .populate('createdBy')
+		// .exec(function(err, tickets){
+		// 	if(err) console.log(err);
+		// 	var data = JSON.stringify(tickets);
+		// 	var fields = ['_id', 'date', 'time', 'endTime', 'location', 'service', 'nbServices', 'status', 'createdAt',  'createdBy'];
+		// 	var fieldNames = ['ID', 'Data', 'Ora e fillimit', 'Ora e mbarimit', 'Vendndodhja', 'Sherbimi', 'Numri i sherbimeve', 'Statusi', 'Krijuar me',  'Krijuar nga'];
+		// 	var csv = json2csv({ data: tickets, fields: fields, fieldNames: fieldNames });
+		// 	fs.writeFile(file, csv, function(err) {
+		// 		if (err) {
+		// 			res.status(500).send('Could not create file');
+		// 		}
 
-			})
-		});
-	});
+		// 	})
+		// });
+	})
+	.post(Verify.verifyOrdinaryUser, Verify.verifyAdmin, function(req, res, next) {
+		let tickets = req.body.tickets;
+		if (!tickets) res.status(401);
+		var data = JSON.stringify(tickets);
+		var fields = ['_id', 'date', 'time', 'endTime', 'location', 'service', 'nbServices', 'status', 'createdAt',  'createdBy'];
+		var fieldNames = ['ID', 'Data', 'Ora e fillimit', 'Ora e mbarimit', 'Vendndodhja', 'Sherbimi', 'Numri i sherbimeve', 'Statusi', 'Krijuar me',  'Krijuar nga'];
+		var csv = json2csv({ data: tickets, fields: fields, fieldNames: fieldNames });
+		var file = path.resolve(`${__dirname}/../public/tickets.csv`);
+		fs.writeFile(file, csv, function(err) {
+			if (err) {
+				res.status(500).send('Could not create file');
+			}
+			res.send(200);
+
+		})
+	})
 
 router.route('/:ticketId')
 	.get(Verify.verifyOrdinaryUser, Verify.verifyAdmin, function(req, res, next){

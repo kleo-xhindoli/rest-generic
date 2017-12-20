@@ -46,14 +46,14 @@ router.route('/')
 					return t.time === req.body.time || (isBetweenTimes(req.body.time, t.time, t.endTime) || isBetweenTimes(req.body.endTime, t.time, t.endTime))
 				});
 
-			if (usersTickets.length >= 3) {
-				res.status(401).send('Ju nuk mund të bëni më shumë se 3 rezervime në të njëjtën datë.');
+			if (usersTickets.length >= 5) {
+				res.status(401).send('Ju nuk mund të bëni më shumë se 5 rezervime në të njëjtën datë.');
 			}
 			else if (collisions) {
 				res.status(401).send('Orari qe ju përzgjodhët është zgjedhur nga dikush tjetër. Ju lutem zgjidhni një orar të ri.');
 			}
-			else if (req.body.nbServices > 3) {
-				res.status(401).send('Ju nuk mund të rezervoni më shumë se 3 shërbime njëkohësisht.');
+			else if (req.body.nbServices > 5) {
+				res.status(401).send('Ju nuk mund të rezervoni më shumë se 5 shërbime njëkohësisht.');
 			}
 			else {
 				generateNewCode().then(function(code){

@@ -12,7 +12,7 @@ console.log('Inserting infocards')
 //     console.log('inserted ' + docs.length + ' infoCards!');
 // });
 
-InfoCards.create(cards[0], function(err, doc) {
+InfoCards.create(cards, function(err, doc) {
     if (err) {
         console.log(err);
         return

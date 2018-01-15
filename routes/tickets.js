@@ -87,9 +87,10 @@ router.route('/all')
 		});
 	})
 
-router.route('/time-intervals/:date/:location')
+router.route('/time-intervals/:date/:location?')
 	.get(Verify.verifyOrdinaryUser, function(req, res, next){
-		Tickets.find({date: req.params.date, status: 'Aprovuar', location: req.params.location})
+		let locationFilter = req.param.location || 'Tiranë: Rr: “Jordan Misja” Tiranë';
+		Tickets.find({date: req.params.date, status: 'Aprovuar', location: locationFilter})
 		.exec(function(err, tickets){
 			if(err) console.log(err);
 			var intervals = [];

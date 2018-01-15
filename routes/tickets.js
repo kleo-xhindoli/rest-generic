@@ -42,6 +42,9 @@ router.route('/')
 				.filter(function(t) {
 					return t.date === req.body.date;
 				})
+				.filter(function(t) {
+					return t.location === req.body.location;
+				})
 				.some(function(t) {
 					return t.time === req.body.time || (isBetweenTimes(req.body.time, t.time, t.endTime) || isBetweenTimes(req.body.endTime, t.time, t.endTime))
 				});
@@ -84,9 +87,9 @@ router.route('/all')
 		});
 	})
 
-router.route('/time-intervals/:date')
+router.route('/time-intervals/:date/:location')
 	.get(Verify.verifyOrdinaryUser, function(req, res, next){
-		Tickets.find({date: req.params.date, status: 'Aprovuar'})
+		Tickets.find({date: req.params.date, status: 'Aprovuar', location: req.params.location})
 		.exec(function(err, tickets){
 			if(err) console.log(err);
 			var intervals = [];

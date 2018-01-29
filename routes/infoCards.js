@@ -11,7 +11,7 @@ router.use(bodyParser.json());
 /* GET home page. */
 router.route('/')
 	.get(function(req, res, next){
-		InfoCards.find({})
+		InfoCards.find({}, {legalInfo: 0})
 		.exec(function(err, infoCard){
 			if(err) {console.log(err); next(err);}
 			res.json(infoCard);
@@ -37,7 +37,7 @@ router.route('/:from/:to')
 .get(function(req, res, next){
 	let from = parseInt(req.params.from);
 	let to = parseInt(req.params.to);
-	InfoCards.find({}).skip(from || 0).limit(to || 0)
+	InfoCards.find({}, {legalInfo: 0}).skip(from || 0).limit(to || 0)
 	.exec(function(err, infoCard){
 		if(err) {console.log(err); next(err);}
 		res.json(infoCard);
@@ -56,7 +56,7 @@ router.route('/institutions')
 
 router.route('/:infoCardId')
 	.get(function(req, res, next){
-		InfoCards.findById(req.params.infoCardId)
+		InfoCards.findById(req.params.infoCardId, {legalInfo: 0})
 		.populate('comments.postedBy')
 		.exec(function(err, infoCard){
 			if(err) {console.log(err); next(err);}

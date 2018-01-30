@@ -89,9 +89,11 @@ router.route('/all')
 
 router.route('/time-intervals/:date/:location?')
 	.get(Verify.verifyOrdinaryUser, function(req, res, next){
-		let locationFilter = req.param.location || 'Tiranë: Rr: “Jordan Misja” Tiranë';
+		let locationFilter = req.params.location;
+		console.log(locationFilter);
 		Tickets.find({date: req.params.date, status: 'Aprovuar', location: locationFilter})
 		.exec(function(err, tickets){
+			console.log(tickets);
 			if(err) console.log(err);
 			var intervals = [];
 			tickets.forEach(function(ticket){

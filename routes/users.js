@@ -162,6 +162,13 @@ router.post('/requestReset', function(req, res){
 	});
 });
 
+router.delete('/:userId', Verify.verifyOrdinaryUser, Verify.verifyAdmin, function(req, res){
+	User.findByIdAndRemove(req.params.userId).exec(function(err, resp) {
+		if (err) console.log(err);
+		res.json(resp);
+	});
+});
+
 generateResetCode = function() {
 	let output = '';
 	for(let i = 0; i < 6; i++) {

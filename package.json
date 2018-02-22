@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "watch": "nodemon ./bin/www"
+    "watch": "nodemon ./bin/www",
+    "import-infocards": "mongoimport --db adisa --collection infocards --file scripts/output.json --jsonArray"
   },
   "dependencies": {
     "body-parser": "~1.15.1",

@@ -26,6 +26,32 @@ let output = input.map((card, i) => {
             number: d.number
         };
     });
+
+    switch (card.isOnline) {
+        case 1:
+            card.isOnline = {
+                lvl1: true
+            }
+            break;
+        case 2:
+            card.isOnline = {
+                lvl2: true
+            }
+            break;
+        case 3:
+            card.isOnline = {
+                lvl3: true
+            }
+            break;
+        case 4:
+            card.isOnline = {
+                lvl4: true
+            }
+            break;
+        default:
+            card.isOnline = {}
+
+    }
     
     if (cardDocs)
         card.documents = cardDocs;

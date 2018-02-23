@@ -58,6 +58,11 @@ router.route('/')
 			else if (req.body.nbServices > 5) {
 				res.status(401).send('Ju nuk mund të rezervoni më shumë se 5 shërbime njëkohësisht.');
 			}
+			else if (compareTimes(req.body.time, '13:50') > 0 || compareTimes(req.body.endTime, '14:00') > 0 || compareTimes(req.body.time, '8:00') < 0 || compareTimes(req.body.endTime, '8:10') < 0){
+				res.status(401).send('Orari që ju përzgjodhët është jashtë orareve të lejuara. Ju lutem zgjidhni një orar tjetër ose përditësoni versionin e aplikacionit.')
+				console.log('RESERVATION OUT OF BOUNDS:');
+				console.log(req.body);
+			}
 			else {
 				generateNewCode().then(function(code){
 					req.body.ticketCode = code;

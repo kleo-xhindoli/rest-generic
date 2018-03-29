@@ -138,6 +138,30 @@ router.post('/resetPassword', function(req, res){
 	});
 });
 
+router.post('/adminChangePassword', Verify.verifyOrdinaryUser, Verify.verifyAdmin, function(req, res){
+	User.findByUsername(req.body.username).exec(function(err, user) {
+		if (err || !user) {
+			console.log(err);
+			res.status(404).json(err);
+			return;
+		}
+
+		if(user.admin) {
+			res.status(403).json({
+				message: 'Cannot change admin\'s password'
+			});
+			return;
+		}
+
+		user.setPassword(req.body.password, function() {
+			user.save();
+			res.status(200).json({
+				message: "Password changed successfully"
+			});
+		})
+	});
+});
+
 router.post('/requestReset', function(req, res){
 	User.findByUsername(req.body.username).exec(function(err, user) {
 		if (err || !user) {
